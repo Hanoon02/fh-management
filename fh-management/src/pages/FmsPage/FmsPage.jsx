@@ -1,5 +1,5 @@
 import NavBar from "../../components/navbar/NavBar";
-import Table from "../../components/table/table";
+import Table from "../../components/table/Table";
 import { URLS } from "../../constants/urls";
 import { TABLE_DATA } from "../../constants/tableData";
 import BackButton from "../../components/CustomButtons/BackButton";
