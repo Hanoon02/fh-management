@@ -5,8 +5,10 @@ import AllCards from "./components/AllCards";
 function LandingPage() {
   return (
     <>
-      <NavBar />
-      <AllCards />
+      <NavBar title="FH MANAGEMENT" />
+      <div className="pt-20">
+        <AllCards />
+      </div>
       <Footer />
     </>
   );
