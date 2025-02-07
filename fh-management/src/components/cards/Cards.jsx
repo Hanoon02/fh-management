@@ -24,12 +24,12 @@ function Cards({ src, alt, disclosureText, onClick, onSettings }) {
 
       {isHovered && (
         <div className="absolute inset-0 flex flex-col items-center justify-end transition-all duration-700 text-center pb-8 w-full px-4">
-          <p className="text-gray-700 mb-4 text-xs">{disclosureText}</p>
+          <p className="text-gray-500 mb-4 font-medium text-xs">{disclosureText}</p>
 
           <div className="w-full flex justify-center relative">
             <button
               onClick={onClick}
-              className="bg-[#3fada8] text-white px-4 py-2 rounded-md text-xs hover:bg-[#338a86]"
+              className="bg-[#3fada8] font-bold text-white px-4 py-2 rounded-md text-xs hover:bg-[#338a86]"
             >
               Open Application
             </button>
