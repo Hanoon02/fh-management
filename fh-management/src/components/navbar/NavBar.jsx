@@ -17,7 +17,7 @@ function NavBar({ title }) {
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 py-3 ${
         isScrolled
-          ? "bg-transparent backdrop-blur-lg border-b border-white/10 shadow-md"
+          ? "bg-transparent backdrop-blur-sm border-b border-white/10 shadow-md"
           : "bg-[#3fada8]"
       }`}
     >
