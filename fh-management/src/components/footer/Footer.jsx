@@ -15,17 +15,15 @@ function Footer() {
         </Link>{" "}
         by{" "}
         <Link
-          to="https://avisionx.net/"
+          to="https://github.com/lokeshdubey2001"
           rel="noopener noreferrer"
           target="_blank"
           className="text-[#3fada8]"
         >
-          Avi Garg
+          Lokesh Dubey
         </Link>
         .
       </small>{" "}
-      <br />
-      <small className="toggle-text">Our Team</small>
     </footer>
   );
 }
