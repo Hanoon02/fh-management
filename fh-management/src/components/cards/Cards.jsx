@@ -29,7 +29,7 @@ function Cards({ src, alt, disclosureText, onClick, onSettings }) {
           <div className="w-full flex justify-center relative">
             <button
               onClick={onClick}
-              className="bg-[#3fada8] font-bold text-white px-4 py-2 rounded-md text-xs hover:bg-[#338a86]"
+              className="bg-gradient-to-r from-[#3fada8] to-[#3f86a6] font-bold text-white px-4 py-2 rounded-md text-xs hover:bg-[#338a86]"
             >
               Open Application
             </button>

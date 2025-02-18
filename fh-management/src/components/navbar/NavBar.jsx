@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 function NavBar({ title }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -15,10 +15,10 @@ function NavBar({ title }) {
 
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 py-3 ${
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-700 py-3 backdrop-blur-sm border-b border-white/10 shadow-md ${
         isScrolled
-          ? "bg-transparent backdrop-blur-sm border-b border-white/10 shadow-md"
-          : "bg-[#3fada8]"
+          ? "bg-transparent"
+          : "bg-gradient-to-r from-[#3fada8] to-[#3f86a6]"
       }`}
     >
       <NavLink
