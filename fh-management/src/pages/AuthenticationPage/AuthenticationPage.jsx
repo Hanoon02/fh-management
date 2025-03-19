@@ -19,7 +19,7 @@ function AuthenticationWrapperPage() {
       setUserEmail(email);
       localStorage.setItem("isAuthenticated", true);
       localStorage.setItem("userEmail", email);
-      const redirectedPath = location.state.from;
+      const redirectedPath = location.state?.from || "/";
       navigate(redirectedPath, { replace: true });
     } else {
       showToast("Access denied. This email is not allowed.", "error");
