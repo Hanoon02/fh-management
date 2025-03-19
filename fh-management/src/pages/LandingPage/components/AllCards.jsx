@@ -22,16 +22,15 @@ function AllCards() {
             await Promise.all(
                 Object.entries(URLS).map(async ([key, value]) => {
                     try {
-                        const response = await fetch(value.url, { method: "GET", mode: "cors" });
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 sec timeout
 
-                        // ✅ Only mark as "Up" if status is 200 (OK)
-                        if (response.status === 200) {
-                            results[key] = "Up";
-                        } else {
-                            results[key] = "Down";
-                        }
+                        await fetch(value.url, { method: "GET", mode: "no-cors", signal: controller.signal });
+
+                        clearTimeout(timeoutId);
+                        results[key] = "Up"; // If request doesn’t fail, assume it's Up
                     } catch {
-                        results[key] = "Down"; // If request fails, mark as down
+                        results[key] = "Down"; // If request fails or times out, mark as Down
                     }
                 })
             );
