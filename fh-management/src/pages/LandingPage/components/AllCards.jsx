@@ -23,20 +23,27 @@ function AllCards() {
                 Object.entries(URLS).map(async ([key, value]) => {
                     try {
                         const controller = new AbortController();
-                        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 sec timeout
+                        const timeoutId = setTimeout(() => controller.abort(), 3000); // Timeout after 3 sec
 
+                        // Send HEAD request to get HTTP response (mimics curl -Is URL | head -n 1)
                         const response = await fetch(value.url, { method: "HEAD", signal: controller.signal });
 
                         clearTimeout(timeoutId);
 
-                        // ✅ Only mark as "Up" if status is 200
+                        // ✅ If status is 200 → Up
                         if (response.status === 200) {
-                            results[key] = "Up";
-                        } else {
-                            results[key] = "Down";
+                            results[key] = "HTTP/1.1 200 OK";
+                        }
+                        // ✅ If status is 502 → Down
+                        else if (response.status === 502) {
+                            results[key] = "HTTP/1.1 502 Bad Gateway";
+                        }
+                        // Other status codes
+                        else {
+                            results[key] = `HTTP/1.1 ${response.status} Unknown`;
                         }
                     } catch {
-                        results[key] = "Down"; // If request fails or times out, assume Down
+                        results[key] = "HTTP/1.1 502 Bad Gateway"; // Assume Down on failure
                     }
                 })
             );
@@ -64,7 +71,7 @@ function AllCards() {
                         <div
                             key={key}
                             className={`p-3 rounded-md text-center text-white font-semibold ${
-                                status[key] === "Up" ? "bg-green-500" : "bg-red-500"
+                                status[key] === "HTTP/1.1 200 OK" ? "bg-green-500" : "bg-red-500"
                             }`}
                         >
                             {value.name}: {status[key] || "Checking..."}
