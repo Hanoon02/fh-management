@@ -16,26 +16,30 @@ function AllCards() {
     const [status, setStatus] = useState({});
 
     useEffect(() => {
-        const checkUrls = async () => {
+        const checkUrls = () => {
             const results = {};
-            const PROXY_URL = "https://api.allorigins.win/get?url="; // Public CORS Proxy
 
-            await Promise.all(
-                Object.entries(URLS).map(async ([key, value]) => {
-                    try {
-                        const response = await fetch(PROXY_URL + encodeURIComponent(value.url));
+            Object.entries(URLS).forEach(([key, value]) => {
+                const img = new Image();
+                img.src = value.url + "/favicon.ico"; // Ping favicon to check status
 
-                        if (!response.ok) {
-                            results[key] = "Down"; // If we get 502 or 500, mark as Down
-                        } else {
-                            results[key] = "Up"; // Otherwise, mark as Up
-                        }
-                    } catch {
-                        results[key] = "Down"; // If request fails, assume Down
+                // If image loads, website is "Up"
+                img.onload = () => {
+                    setStatus((prev) => ({ ...prev, [key]: "Up" }));
+                };
+
+                // If image fails, website is "Down"
+                img.onerror = () => {
+                    setStatus((prev) => ({ ...prev, [key]: "Down" }));
+                };
+
+                // Timeout in case website is hanging (3 sec)
+                setTimeout(() => {
+                    if (!status[key]) {
+                        setStatus((prev) => ({ ...prev, [key]: "Down" }));
                     }
-                })
-            );
-            setStatus(results);
+                }, 3000);
+            });
         };
 
         checkUrls();
