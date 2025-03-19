@@ -11,6 +11,8 @@ import CRAMS from "../../../assets/svgs/crams.svg";
 import Cards from "../../../components/cards/Cards";
 import { URLS } from "../../../constants/urls";
 
+const API_URL = "https://fh-managament-backend.vercel.app/api/check-status";
+
 function AllCards() {
     const navigate = useNavigate();
     const [status, setStatus] = useState({});
@@ -22,31 +24,15 @@ function AllCards() {
             await Promise.all(
                 Object.entries(URLS).map(async ([key, value]) => {
                     try {
-                        const controller = new AbortController();
-                        const timeoutId = setTimeout(() => controller.abort(), 3000); // Timeout after 3 sec
-
-                        // Send HEAD request to get HTTP response (mimics curl -Is URL | head -n 1)
-                        const response = await fetch(value.url, { method: "HEAD", signal: controller.signal });
-
-                        clearTimeout(timeoutId);
-
-                        // ✅ If status is 200 → Up
-                        if (response.status === 200) {
-                            results[key] = "HTTP/1.1 200 OK";
-                        }
-                        // ✅ If status is 502 → Down
-                        else if (response.status === 502) {
-                            results[key] = "HTTP/1.1 502 Bad Gateway";
-                        }
-                        // Other status codes
-                        else {
-                            results[key] = `HTTP/1.1 ${response.status} Unknown`;
-                        }
+                        const response = await fetch(`${API_URL}?url=${encodeURIComponent(value.url)}`);
+                        const data = await response.json();
+                        results[key] = data.status.includes("200 OK") ? "UP" : "DOWN"; // ✅ Convert status to UP/DOWN
                     } catch {
-                        results[key] = "HTTP/1.1 502 Bad Gateway"; // Assume Down on failure
+                        results[key] = "DOWN"; // ❌ Default to DOWN if API fails
                     }
                 })
             );
+
             setStatus(results);
         };
 
@@ -71,7 +57,7 @@ function AllCards() {
                         <div
                             key={key}
                             className={`p-3 rounded-md text-center text-white font-semibold ${
-                                status[key] === "HTTP/1.1 200 OK" ? "bg-green-500" : "bg-red-500"
+                                status[key] === "UP" ? "bg-green-500" : "bg-red-500"
                             }`}
                         >
                             {value.name}: {status[key] || "Checking..."}
@@ -82,62 +68,14 @@ function AllCards() {
 
             {/* Cards Section */}
             <div className="grid md:grid-cols-4 grid-cols-1 gap-4 px-6 my-7 justify-center">
-                <Cards
-                    src={FMS}
-                    alt="fms portal"
-                    disclosureText={URLS.fms.title}
-                    onClick={() => path(URLS.fms.url)}
-                    onSettings={() => onSettings(URLS.fms.route)}
-                />
-                <Cards
-                    src={HOSTEL}
-                    alt="hostel"
-                    disclosureText={URLS.hostel.title}
-                    onClick={() => path(URLS.hostel.url)}
-                    onSettings={() => onSettings(URLS.hostel.route)}
-                />
-                <Cards
-                    src={SHARE}
-                    alt="share"
-                    disclosureText={URLS.share.title}
-                    onClick={() => path(URLS.share.url)}
-                    onSettings={() => onSettings(URLS.share.route)}
-                />
-                <Cards
-                    src={BOOK}
-                    alt="book"
-                    disclosureText={URLS.book.title}
-                    onClick={() => path(URLS.book.url)}
-                    onSettings={() => onSettings(URLS.book.route)}
-                />
-                <Cards
-                    src={ACHIEVE}
-                    alt="achieve"
-                    disclosureText={URLS.achieve.title}
-                    onClick={() => path(URLS.achieve.url)}
-                    onSettings={() => onSettings(URLS.achieve.route)}
-                />
-                <Cards
-                    src={WBC}
-                    alt="wbc"
-                    disclosureText={URLS.wbc.title}
-                    onClick={() => path(URLS.wbc.url)}
-                    onSettings={() => onSettings(URLS.wbc.route)}
-                />
-                <Cards
-                    src={NODUES}
-                    alt="nodues"
-                    disclosureText={URLS.nodues.title}
-                    onClick={() => path(URLS.nodues.url)}
-                    onSettings={() => onSettings(URLS.nodues.route)}
-                />
-                <Cards
-                    src={CRAMS}
-                    alt="crams"
-                    disclosureText={URLS.crams.title}
-                    onClick={() => path(URLS.crams.url)}
-                    onSettings={() => onSettings(URLS.crams.route)}
-                />
+                <Cards src={FMS} alt="fms portal" disclosureText={URLS.fms.title} onClick={() => path(URLS.fms.url)} onSettings={() => onSettings(URLS.fms.route)} />
+                <Cards src={HOSTEL} alt="hostel" disclosureText={URLS.hostel.title} onClick={() => path(URLS.hostel.url)} onSettings={() => onSettings(URLS.hostel.route)} />
+                <Cards src={SHARE} alt="share" disclosureText={URLS.share.title} onClick={() => path(URLS.share.url)} onSettings={() => onSettings(URLS.share.route)} />
+                <Cards src={BOOK} alt="book" disclosureText={URLS.book.title} onClick={() => path(URLS.book.url)} onSettings={() => onSettings(URLS.book.route)} />
+                <Cards src={ACHIEVE} alt="achieve" disclosureText={URLS.achieve.title} onClick={() => path(URLS.achieve.url)} onSettings={() => onSettings(URLS.achieve.route)} />
+                <Cards src={WBC} alt="wbc" disclosureText={URLS.wbc.title} onClick={() => path(URLS.wbc.url)} onSettings={() => onSettings(URLS.wbc.route)} />
+                <Cards src={NODUES} alt="nodues" disclosureText={URLS.nodues.title} onClick={() => path(URLS.nodues.url)} onSettings={() => onSettings(URLS.nodues.route)} />
+                <Cards src={CRAMS} alt="crams" disclosureText={URLS.crams.title} onClick={() => path(URLS.crams.url)} onSettings={() => onSettings(URLS.crams.route)} />
             </div>
         </div>
     );
