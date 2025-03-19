@@ -22,10 +22,16 @@ function AllCards() {
             await Promise.all(
                 Object.entries(URLS).map(async ([key, value]) => {
                     try {
-                        await fetch(value.url, { method: "GET", mode: "no-cors" });
-                        results[key] = "Up"; // If fetch doesn't throw an error, assume it's up
+                        const response = await fetch(value.url, { method: "GET", mode: "cors" });
+
+                        // ✅ Only mark as "Up" if status is 200 (OK)
+                        if (response.status === 200) {
+                            results[key] = "Up";
+                        } else {
+                            results[key] = "Down";
+                        }
                     } catch {
-                        results[key] = "Down"; // If fetch fails, mark it as down
+                        results[key] = "Down"; // If request fails, mark as down
                     }
                 })
             );
