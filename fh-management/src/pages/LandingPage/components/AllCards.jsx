@@ -18,19 +18,20 @@ function AllCards() {
     useEffect(() => {
         const checkUrls = async () => {
             const results = {};
+            const PROXY_URL = "https://api.allorigins.win/get?url="; // Public CORS Proxy
 
             await Promise.all(
                 Object.entries(URLS).map(async ([key, value]) => {
                     try {
-                        const controller = new AbortController();
-                        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 sec timeout
+                        const response = await fetch(PROXY_URL + encodeURIComponent(value.url));
 
-                        await fetch(value.url, { method: "GET", mode: "no-cors", signal: controller.signal });
-
-                        clearTimeout(timeoutId);
-                        results[key] = "Up"; // If request doesn’t fail, assume it's Up
+                        if (!response.ok) {
+                            results[key] = "Down"; // If we get 502 or 500, mark as Down
+                        } else {
+                            results[key] = "Up"; // Otherwise, mark as Up
+                        }
                     } catch {
-                        results[key] = "Down"; // If request fails or times out, mark as Down
+                        results[key] = "Down"; // If request fails, assume Down
                     }
                 })
             );
