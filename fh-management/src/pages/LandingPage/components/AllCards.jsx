@@ -16,30 +16,31 @@ function AllCards() {
     const [status, setStatus] = useState({});
 
     useEffect(() => {
-        const checkUrls = () => {
+        const checkUrls = async () => {
             const results = {};
 
-            Object.entries(URLS).forEach(([key, value]) => {
-                const img = new Image();
-                img.src = value.url + "/favicon.ico"; // Ping favicon to check status
+            await Promise.all(
+                Object.entries(URLS).map(async ([key, value]) => {
+                    try {
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 sec timeout
 
-                // If image loads, website is "Up"
-                img.onload = () => {
-                    setStatus((prev) => ({ ...prev, [key]: "Up" }));
-                };
+                        const response = await fetch(value.url, { method: "HEAD", signal: controller.signal });
 
-                // If image fails, website is "Down"
-                img.onerror = () => {
-                    setStatus((prev) => ({ ...prev, [key]: "Down" }));
-                };
+                        clearTimeout(timeoutId);
 
-                // Timeout in case website is hanging (3 sec)
-                setTimeout(() => {
-                    if (!status[key]) {
-                        setStatus((prev) => ({ ...prev, [key]: "Down" }));
+                        // ✅ Only mark as "Up" if status is 200
+                        if (response.status === 200) {
+                            results[key] = "Up";
+                        } else {
+                            results[key] = "Down";
+                        }
+                    } catch {
+                        results[key] = "Down"; // If request fails or times out, assume Down
                     }
-                }, 3000);
-            });
+                })
+            );
+            setStatus(results);
         };
 
         checkUrls();
